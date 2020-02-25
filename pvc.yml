@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wordpress-persistent-storage
+  labels:
+    app: wordpress
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: sc-sample    
+  volumeName: "wordpress-persistent-storage"    
+      
+​
+---
+​
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-persistent-storage
+  labels:
+    app: wordpress
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: sc-sample    
+  volumeName: "mysql-persistent-storage"
