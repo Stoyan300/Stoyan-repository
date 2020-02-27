@@ -1,3 +1,4 @@
+---
 - hosts: host
   become: true
   tasks:
@@ -131,18 +132,41 @@
   tasks:
    - name: join worker
      shell: "{{ hostvars['master'].join_command }}"
- 
+     ignore_errors: yes
+  
 - hosts: master
   become: yes
-  become_user: stoyan 
+  become_user: stoyan
   tasks:
-  
+
     - name: label worker
-      command: kubectl label node worker node-role.kubernetes.io/worker=worker    
+      command: kubectl label node worker node-role.kubernetes.io/worker=worker
     
+    #install helm
+- hosts: master
+  tasks:
+
     - name: installing helm
       command: curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
     - name: installing helm
       command: chmod 777 get_helm.sh
     - name: installing helm
       command: ./get_helm.sh
+    # install jdk
+- hosts: master
+  tasks:
+    - name: installing java
+      command: apt-get install openjdk-8-jre -y      
+    #ssh-keygen
+- hosts: master
+  become: yes
+  become_user: stoyan
+  tasks:
+    - name: mkdir .ssh
+      command: mkdir /home/stoyan/.ssh
+    - openssh_keypair:
+        path: /home/stoyan/.ssh/id_rsa
+    - name: touch authorized_keys
+      command: touch /home/stoyan/.ssh/authorized_keys 
+    - name: cat id_rsa.pub
+      shell: cd /home/stoyan/.ssh/ && cat /home/stoyan/.ssh/id_rsa.pub >> authorized_keys  
